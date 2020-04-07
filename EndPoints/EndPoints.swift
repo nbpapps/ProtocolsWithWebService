@@ -8,16 +8,13 @@
 
 import Foundation
 
-protocol EndPointURLProviding {
-    var endPointURL : URL { get }
-}
 
 struct Endpoint {
     private var path: String
     private var queryItems: [URLQueryItem] = []
 }
 
-extension Endpoint : EndPointURLProviding {
+extension Endpoint  {
     var endPointURL: URL {
         
         let defaultQueryItems = [URLQueryItem(name: "api_key", value: "4258adb04e249b52c4d9dba2586f9c8a"),URLQueryItem(name: "language", value: "en-US")]
@@ -44,11 +41,9 @@ extension Endpoint {
         return Endpoint(path: "3/movie/test")
     }
     
-    
     static func popularMovies(atPage page : String) -> Self {
         let pageQueryItem = URLQueryItem(name: "page", value: page)
         return Endpoint(path: "3/movie/popular", queryItems: [pageQueryItem])
-
     }
     
     static func movie(withId id : String) -> Self {

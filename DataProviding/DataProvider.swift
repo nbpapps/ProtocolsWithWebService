@@ -8,15 +8,27 @@
 
 import Foundation
 
-protocol DataProviding {
-    func getData<T:Decodable>(for endPointURLProvider : EndPointURLProviding, with completion :@escaping (Result<T,Error>) -> Void)
-}
-
-class DataProvider : DataProviding {
+class DataProvider {
+    
+    
+    func getMoviesForPage<T:Decodable>(page : Int, with completion : @escaping (Result<T,Error>) -> Void) {
+        let moviesEndpoint = Endpoint.popularMovies(atPage: String(page))
+        getData(for: moviesEndpoint.endPointURL) { (result : Result<T,Error>) in
+            completion(result)
+        }
+    }
+    
+    func getMoviePage<T:Decodable>(for movieId : String, with completion : @escaping (Result<T,Error>) -> Void) {
+        let moviePageEndpoint = Endpoint.movie(withId: movieId)
+        getData(for: moviePageEndpoint.endPointURL) { (result : Result<T,Error>) in
+            completion(result)
+        }
+    }
+    
     
     //MARK: - This method is in charge of a flow
-    func getData<T>(for endPointURLProvider: EndPointURLProviding, with completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
-        fetchNetworkData(at: endPointURLProvider.endPointURL) {[weak self] (networkResult : Result<Data,Error>) in
+    private func getData<T>(for url: URL, with completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
+        fetchNetworkData(at: url) {[weak self] (networkResult : Result<Data,Error>) in
             guard let self = self else {return}
             switch networkResult {
                 
