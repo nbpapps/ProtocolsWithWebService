@@ -8,10 +8,6 @@
 
 import Foundation
 
-enum JsonError : Error { //conforms to error protocol
-    case invalidJson
-}
-
 struct JsonParser {
     
     private var data : Data
