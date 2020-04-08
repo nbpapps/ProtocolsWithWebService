@@ -10,68 +10,19 @@ import Foundation
 
 class DataProvider {
     
+    private let networkDataFlow = NetworkDataFlow()
     
     func getMoviesForPage<T:Decodable>(page : Int, with completion : @escaping (Result<T,Error>) -> Void) {
         let moviesEndpoint = Endpoint.popularMovies(atPage: String(page))
-        getData(for: moviesEndpoint.endPointURL) { (result : Result<T,Error>) in
+        networkDataFlow.getData(for: moviesEndpoint.endPointURL) { (result : Result<T,Error>) in
             completion(result)
         }
     }
     
     func getMoviePage<T:Decodable>(for movieId : String, with completion : @escaping (Result<T,Error>) -> Void) {
         let moviePageEndpoint = Endpoint.movie(withId: movieId)
-        getData(for: moviePageEndpoint.endPointURL) { (result : Result<T,Error>) in
+        networkDataFlow.getData(for: moviePageEndpoint.endPointURL) { (result : Result<T,Error>) in
             completion(result)
         }
     }
-    
-    
-    //MARK: - This method is in charge of a flow
-    private func getData<T>(for url: URL, with completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
-        fetchNetworkData(at: url) {[weak self] (networkResult : Result<Data,Error>) in
-            guard let self = self else {return}
-            switch networkResult {
-                
-            case .success(let data):
-                self.parseNetworkData(data: data) { (parserResult : Result<T,Error>) in
-                    DispatchQueue.main.async {
-                        switch parserResult {
-                        case .success(let items):
-                            completion(.success(items))
-                        case .failure(let error):
-                            completion(.failure(error)) // parser error
-                        }
-                    }
-                }
-                
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    completion(.failure(error)) //network fail
-                }
-                
-            }
-        }
-    }
-    
-    
-    //MARK: - get the data form the network
-    private func fetchNetworkData(at url : URL, with completion : @escaping (Result<Data,Error>) -> Void) {
-        let networkAccess = NetworkAccess(url: url)
-        networkAccess.fetchData() {(result) in
-            switch result {
-            case .success(let data):
-                completion(.success(data))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    //MARK: - parse the data
-    private func parseNetworkData<T:Decodable>(data : Data,with completion : @escaping (Result<T,Error>) -> Void){
-        let jsonParser = JsonParser(data: data)
-        let reslut : Result<T,Error> = jsonParser.decode()
-        completion(reslut)
-    }
-    
 }
