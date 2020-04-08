@@ -8,45 +8,37 @@
 
 import Foundation
 
-//protocol dataProviding {
-//    <#requirements#>
-//}
+protocol DataProviding {
+    var networkDataObtainer : NetworkDataObtaining {get}
+}
 
-protocol MoviesProviding {
-    var networkDataFlow : NetworkDataFlowProviding {get} 
+protocol MoviesProviding : DataProviding {
     func getMovies(forPage page : Int,with completion : @escaping (Result<Movie,Error>) -> Void )
 }
 
-struct MoviesProvider : MoviesProviding {
-    var networkDataFlow: NetworkDataFlowProviding
-    
-    init(networkDataFlow: NetworkDataFlowProviding) {
-        self.networkDataFlow =  networkDataFlow
-    }
-    
-    func getMovies(forPage page: Int, with completion: @escaping (Result<Movie, Error>) -> Void) {
-        let moviesEndpoint = Endpoint.popularMovies(atPage: String(page))
-        networkDataFlow.getData(for: moviesEndpoint, with: completion)
-    }
-}
-
-
-protocol MoviePageProviding {
-    var networkDataFlow : NetworkDataFlowProviding {get}
+protocol MoviePageProviding : DataProviding {
     func getMovie(forId movieId : String,with completion : @escaping(Result<MoviePage,Error>) -> Void)
 }
 
-struct MoviePageProvider : MoviePageProviding {
-    var networkDataFlow: NetworkDataFlowProviding
+struct DataProvider : DataProviding {
+    var networkDataObtainer: NetworkDataObtaining
     
-    init(networkDataFlow: NetworkDataFlowProviding) {
-        self.networkDataFlow =  networkDataFlow
+    init(networkDataObtainer: NetworkDataObtaining) {
+        self.networkDataObtainer =  networkDataObtainer
     }
-    
+}
+
+extension DataProvider : MoviesProviding {
+    func getMovies(forPage page: Int, with completion: @escaping (Result<Movie, Error>) -> Void) {
+        let moviesEndpoint = Endpoint.popularMovies(atPage: String(page))
+        networkDataObtainer.getData(for: moviesEndpoint, with: completion)
+    }
+}
+
+extension DataProvider : MoviePageProviding {
     func getMovie(forId movieId: String, with completion: @escaping (Result<MoviePage, Error>) -> Void) {
         let moviePageEndpoint = Endpoint.movie(withId: movieId)
-        networkDataFlow.getData(for: moviePageEndpoint, with: completion)
+        networkDataObtainer.getData(for: moviePageEndpoint, with: completion)
     }
-    
-    
 }
+

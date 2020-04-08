@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol NetworkDataFlowProviding {
+protocol NetworkDataObtaining {
     func getData<T:Decodable>(for endPointURLProvider : EndPointURLProviding, with completion :@escaping (Result<T,Error>) -> Void)
 }
 
-class NetworkDataFlow : NetworkDataFlowProviding {
+class NetworkDataObtainer : NetworkDataObtaining {
     
     init() {}
     

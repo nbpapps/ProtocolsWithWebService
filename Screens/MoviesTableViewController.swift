@@ -10,14 +10,13 @@ import UIKit
 
 class MoviesTableViewController: UITableViewController {
     
-    let moviesDataProvider : MoviesProviding
-    let moviePageDataProvider : MoviePageProviding
+    let dataProvider : DataProvider
     var movies = [MovieInfo]()
     
-    init(moviesDataProvider : MoviesProviding,moviePageDataProvider : MoviePageProviding) {
-        self.moviesDataProvider = moviesDataProvider
-        self.moviePageDataProvider = moviePageDataProvider
+    init(dataProvider : DataProvider) {
+        self.dataProvider = dataProvider
         super.init(nibName: nil, bundle: nil)
+
     }
     
     required init?(coder: NSCoder) {
@@ -31,8 +30,8 @@ class MoviesTableViewController: UITableViewController {
         loadMovies()
     }
     
-    func loadMovies() {
-        moviesDataProvider.getMovies(forPage: 1) { [weak self](moviesResult : Result<Movie,Error>) in
+    private func loadMovies() {
+        dataProvider.getMovies(forPage: 1) { [weak self](moviesResult : Result<Movie,Error>) in
             guard let self = self else {return}
             switch moviesResult {
             case .success(let movies):
@@ -66,7 +65,7 @@ class MoviesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let movie = movies[indexPath.row]
         let movieId = String(movie.id)
-        moviePageDataProvider.getMovie(forId: movieId) { (result) in
+        dataProvider.getMovie(forId: movieId) { (result) in
             print(result)
         }
     }

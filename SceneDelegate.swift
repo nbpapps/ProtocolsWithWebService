@@ -28,10 +28,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func createMainNavigationController() -> UINavigationController {
-        let networkDataFlow = NetworkDataFlow()
-        let moviesProvider = MoviesProvider(networkDataFlow: networkDataFlow)
-        let moviePageProvider = MoviePageProvider(networkDataFlow: networkDataFlow)
-        let moviesTableVC = MoviesTableViewController(moviesDataProvider: moviesProvider, moviePageDataProvider: moviePageProvider)
+        let networkDataObtainer = NetworkDataObtainer()
+        let dataProvider = DataProvider(networkDataObtainer: networkDataObtainer)
+        let moviesTableVC = MoviesTableViewController(dataProvider: dataProvider)
         return UINavigationController(rootViewController: moviesTableVC)
     }
     
