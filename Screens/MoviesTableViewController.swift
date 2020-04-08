@@ -10,7 +10,7 @@ import UIKit
 
 class MoviesTableViewController: UITableViewController {
 
-    let dataProvider = DataProvider()
+    let dataProvider = DataProvider //define this protocol
     var movies = [MovieInfo]()
     
     override func viewDidLoad() {
@@ -19,6 +19,12 @@ class MoviesTableViewController: UITableViewController {
     }
     
     func loadMovies() {
+        
+        dataProvider.getMovies {
+            
+        }
+        
+        
         let moviesEndpoint = Endpoint.popularMovies(atPage: "1")
             dataProvider.getData(for: moviesEndpoint) { [weak self] (moviesResult : Result<Movie,Error>) in
                 guard let self = self else {return}
