@@ -14,6 +14,8 @@ protocol DataProviding {
 
 class DataProvider : DataProviding {
     
+    
+    
     //MARK: - This method is in charge of a flow
     func getData<T>(for endPointURLProvider: EndPointURLProviding, with completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
         fetchNetworkData(at: endPointURLProvider.endPointURL) {[weak self] (networkResult : Result<Data,Error>) in
