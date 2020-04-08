@@ -8,60 +8,45 @@
 
 import Foundation
 
-protocol DataProviding {
-    func getData<T:Decodable>(for endPointURLProvider : EndPointURLProviding, with completion :@escaping (Result<T,Error>) -> Void)
+//protocol dataProviding {
+//    <#requirements#>
+//}
+
+protocol MoviesProviding {
+    var networkDataFlow : NetworkDataFlowProviding {get} 
+    func getMovies(forPage page : Int,with completion : @escaping (Result<Movie,Error>) -> Void )
 }
 
-class DataProvider {
+struct MoviesProvider : MoviesProviding {
+    var networkDataFlow: NetworkDataFlowProviding
     
+    init(networkDataFlow: NetworkDataFlowProviding) {
+        self.networkDataFlow =  networkDataFlow
+    }
     
+    func getMovies(forPage page: Int, with completion: @escaping (Result<Movie, Error>) -> Void) {
+        let moviesEndpoint = Endpoint.popularMovies(atPage: String(page))
+        networkDataFlow.getData(for: moviesEndpoint, with: completion)
+    }
+}
+
+
+protocol MoviePageProviding {
+    var networkDataFlow : NetworkDataFlowProviding {get}
+    func getMovie(forId movieId : String,with completion : @escaping(Result<MoviePage,Error>) -> Void)
+}
+
+struct MoviePageProvider : MoviePageProviding {
+    var networkDataFlow: NetworkDataFlowProviding
     
-    //MARK: - This method is in charge of a flow
-//    func getData<T>(for endPointURLProvider: EndPointURLProviding, with completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
-//        fetchNetworkData(at: endPointURLProvider.endPointURL) {[weak self] (networkResult : Result<Data,Error>) in
-//            guard let self = self else {return}
-//            switch networkResult {
-//                
-//            case .success(let data):
-//                self.parseNetworkData(data: data) { (parserResult : Result<T,Error>) in
-//                    DispatchQueue.main.async {
-//                        switch parserResult {
-//                        case .success(let items):
-//                            completion(.success(items))
-//                        case .failure(let error):
-//                            completion(.failure(error)) // parser error
-//                        }
-//                    }
-//                }
-//                
-//            case .failure(let error):
-//                DispatchQueue.main.async {
-//                    completion(.failure(error)) //network fail
-//                }
-//                
-//            }
-//        }
-//    }
+    init(networkDataFlow: NetworkDataFlowProviding) {
+        self.networkDataFlow =  networkDataFlow
+    }
     
+    func getMovie(forId movieId: String, with completion: @escaping (Result<MoviePage, Error>) -> Void) {
+        let moviePageEndpoint = Endpoint.movie(withId: movieId)
+        networkDataFlow.getData(for: moviePageEndpoint, with: completion)
+    }
     
-//    //MARK: - get the data form the network
-//    private func fetchNetworkData(at url : URL, with completion : @escaping (Result<Data,Error>) -> Void) {
-//        let networkAccess = NetworkAccess(url: url)
-//        networkAccess.fetchData() {(result) in
-//            switch result {
-//            case .success(let data):
-//                completion(.success(data))
-//            case .failure(let error):
-//                completion(.failure(error))
-//            }
-//        }
-//    }
-//    
-//    //MARK: - parse the data
-//    private func parseNetworkData<T:Decodable>(data : Data,with completion : @escaping (Result<T,Error>) -> Void){
-//        let jsonParser = JsonParser(data: data)
-//        let reslut : Result<T,Error> = jsonParser.decode()
-//        completion(reslut)
-//    }
     
 }
