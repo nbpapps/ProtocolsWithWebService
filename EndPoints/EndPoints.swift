@@ -48,7 +48,6 @@ extension Endpoint {
     static func popularMovies(atPage page : String) -> Self {
         let pageQueryItem = URLQueryItem(name: "page", value: page)
         return Endpoint(path: "3/movie/popular", queryItems: [pageQueryItem])
-
     }
     
     static func movie(withId id : String) -> Self {

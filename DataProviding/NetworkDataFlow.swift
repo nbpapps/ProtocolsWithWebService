@@ -12,6 +12,7 @@ protocol NetworkDataObtaining {
     func getData<T:Decodable>(for endPointURLProvider : EndPointURLProviding, with completion :@escaping (Result<T,Error>) -> Void)
 }
 
+//This class gets a URL (as an EndPointURLProviding), uses it to make a network call (via the network access class) and than parses it into a model object (this is a common flow in apps,so it is composed here)
 class NetworkDataObtainer : NetworkDataObtaining {
     
     init() {}
